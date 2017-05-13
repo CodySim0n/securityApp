@@ -6,7 +6,7 @@ from network.icmp import ICMP
 from network.tcp import TCP
 from network.udp import UDP
 from network.pcap import Pcap
-from network.http import HTTP
+# from network.http import HTTP
 
 TAB_1 = '\t - '
 TAB_2 = '\t\t - '

@@ -7,4 +7,14 @@ var pcap = require('pcap')
 //     console.log('finished');
 // })
 
+
+
 console.log(pcap);
+
+pcap_session = pcap.createSession();
+pcap_session.on('packet', function (raw_packet) {
+   var packet = pcap.decode.packet(raw_packet);
+//    console.log(packet);
+
+   console.log(packet.link.ip.tcp.dport)
+});
