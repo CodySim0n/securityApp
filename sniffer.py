@@ -6,6 +6,7 @@ from network.icmp import ICMP
 from network.tcp import TCP
 from network.udp import UDP
 from network.pcap import Pcap
+from pymongo import MongoClient
 # from network.http import HTTP
 
 TAB_1 = '\t - '
@@ -22,6 +23,11 @@ DATA_TAB_4 = '\t\t\t\t   '
 def main():
     pcap = Pcap('capture.pcap')
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+    client = MongoClient('localhost', 27017)
+    db = client.network_data
+    
+    
+    x = 0 
 
     while True:
         raw_data, addr = conn.recvfrom(65535)
@@ -29,7 +35,19 @@ def main():
         eth = Ethernet(raw_data)
 
         print('\nEthernet Frame:')
-        print(TAB_1 + 'Destination: {}, Source: {}, Protocol: {}'.format(eth.dest_mac, eth.src_mac, eth.proto))
+        
+        a = "00:00:00:00:00:00"
+        
+        x = format(eth.dest_mac)
+        y = format(eth.src_mac)
+        s = format(eth.proto)
+        if x != a:
+            post = {
+                "Destination" : x,
+                "Source": y,
+                "protocol": s
+                }
+            db.networkStuff.insert(post)
 
         # IPv4
         if eth.proto == 8:
@@ -82,10 +100,11 @@ def main():
             else:
                 print(TAB_1 + 'Other IPv4 Data:')
                 print(format_multi_line(DATA_TAB_2, ipv4.data))
-
+           
         else:
             print('Ethernet Data:')
             print(format_multi_line(DATA_TAB_1, eth.data))
+        
 
     pcap.close()
 
